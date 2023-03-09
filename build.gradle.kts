@@ -11,6 +11,7 @@ repositories {
 }
 
 dependencies {
+    implementation("io.github.realyusufismail:ydwk:1.3.0")
     testImplementation(kotlin("test"))
 }
 
@@ -19,9 +20,9 @@ tasks.test {
 }
 
 kotlin {
-    jvmToolchain(8)
+    jvmToolchain(11)
 }
 
 application {
-    mainClass.set("MainKt")
+    mainClass.set("TheIslamicDiscordBot")
 }
