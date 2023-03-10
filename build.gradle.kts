@@ -1,17 +1,38 @@
+buildscript {
+    repositories { mavenCentral() }
+    dependencies {
+        classpath("org.postgresql:postgresql:42.5.4")
+        classpath("io.github.realyusufismail:jconfig:1.0.8")
+    }
+}
+
 plugins {
     kotlin("jvm") version "1.8.0"
     id("com.diffplug.spotless") version "6.16.0"
+    id("nu.studer.jooq") version "8.1"
     application
 }
 
 group = "io.github.yip"
-
 version = "1.0-SNAPSHOT"
 
 repositories { mavenCentral() }
 
 dependencies {
+    // YDWK
     implementation("io.github.realyusufismail:ydwk:1.3.0")
+    // JOOQ
+    implementation("org.jooq:jooq:3.18.0")
+    implementation("org.jooq:jooq-meta:3.18.0")
+    implementation("org.jooq:jooq-codegen:3.18.0")
+    // logger
+    implementation("ch.qos.logback:logback-classic:1.4.5")
+    implementation("ch.qos.logback:logback-core:1.4.5")
+    implementation("uk.org.lidalia:sysout-over-slf4j:1.0.2")
+    // database
+    implementation("org.postgresql:postgresql:42.5.4")
+    implementation("com.zaxxer:HikariCP:5.0.1")
+    // test
     testImplementation(kotlin("test"))
 }
 
