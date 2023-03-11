@@ -24,8 +24,6 @@ group = "io.github.yip"
 
 version = "1.0-SNAPSHOT"
 
-val config: JConfig = JConfig.build()
-
 repositories { mavenCentral() }
 
 dependencies {
@@ -63,7 +61,6 @@ tasks.jacocoTestReport {
     }
     finalizedBy("jacocoTestCoverageVerification")
 }
-
 
 spotless {
     kotlin {
@@ -162,14 +159,19 @@ jooq {
 
 tasks.named<JooqGenerate>("generateJooq") { allInputsDeclared.set(true) }
 
-
 fun getSecrete(key: String): String? {
     return if (System.getenv().containsKey(key)) {
         System.getenv(key)
     } else if (System.getProperties().containsKey(key)) {
         System.getProperty(key)
-    } else if (config.contains(key)) {
-        config[key]?.asString
+    } // check if config.json exists
+    else if (File("config.json").exists()) {
+        val config: JConfig = JConfig.build()
+        if (config.contains(key)) {
+            config[key]?.asString
+        } else {
+            null
+        }
     } else {
         null
     }
