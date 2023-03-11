@@ -30,9 +30,9 @@ class TheIslamicDiscordBot
 
 val jConfig: JConfig = JConfig.build()
 
-val mainLogger : Logger = LoggerFactory.getLogger(TheIslamicDiscordBot::class.java)
+val mainLogger: Logger = LoggerFactory.getLogger(TheIslamicDiscordBot::class.java)
 
-val database : Database = Database()
+val database: Database = Database()
 
 fun main() {
     val ydwk: YDWK =
