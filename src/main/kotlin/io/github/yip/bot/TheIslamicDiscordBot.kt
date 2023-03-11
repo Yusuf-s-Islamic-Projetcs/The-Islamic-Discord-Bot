@@ -21,10 +21,22 @@ package io.github.yip.bot
 import io.github.realyusufismail.jconfig.JConfig
 import io.github.ydwk.ydwk.BotBuilder.createDefaultBot
 import io.github.ydwk.ydwk.YDWK
+import io.github.yip.bot.databse.Database
+import io.github.yip.bot.listeners.CoreEventListener
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
-val config: JConfig = JConfig.build()
+class TheIslamicDiscordBot
+
+val jConfig: JConfig = JConfig.build()
+
+val mainLogger : Logger = LoggerFactory.getLogger(TheIslamicDiscordBot::class.java)
+
+val database : Database = Database()
 
 fun main() {
     val ydwk: YDWK =
-        createDefaultBot(config["token"]?.asString ?: throw Exception("Token not found")).build()
+        createDefaultBot(jConfig["TOKEN"]?.asString ?: throw Exception("Token not found")).build()
+
+    ydwk.addEventListeners(CoreEventListener())
 }
