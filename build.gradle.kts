@@ -17,6 +17,7 @@ plugins {
     id("com.diffplug.spotless") version "6.16.0"
     id("nu.studer.jooq") version "8.1"
     application
+    jacoco // code coverage reports
 }
 
 group = "io.github.yip"
@@ -40,14 +41,29 @@ dependencies {
     implementation("uk.org.lidalia:sysout-over-slf4j:1.0.2")
     // database
     implementation("org.postgresql:postgresql:42.5.4")
+    jooqGenerator("org.postgresql:postgresql:42.5.4")
     implementation("com.zaxxer:HikariCP:5.0.1")
     // test
     testImplementation(kotlin("test"))
 }
 
-tasks.test { useJUnitPlatform() }
+tasks.test {
+    useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
+}
 
 configurations { all { exclude(group = "org.slf4j", module = "slf4j-log4j12") } }
+
+tasks.jacocoTestReport {
+    group = "Reporting"
+    description = "Generate Jacoco coverage reports after running tests."
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+    finalizedBy("jacocoTestCoverageVerification")
+}
+
 
 spotless {
     kotlin {
@@ -85,7 +101,7 @@ spotless {
     }
 }
 
-kotlin { jvmToolchain(11) }
+kotlin { jvmToolchain(17) }
 
 application { mainClass.set("TheIslamicDiscordBot") }
 
