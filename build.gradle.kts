@@ -1,5 +1,6 @@
 import io.github.realyusufismail.jconfig.*
 import nu.studer.gradle.jooq.JooqEdition
+import nu.studer.gradle.jooq.JooqGenerate
 import org.jooq.meta.jaxb.ForcedType
 import org.jooq.meta.jaxb.Logging
 
@@ -142,6 +143,9 @@ jooq {
         }
     }
 }
+
+tasks.named<JooqGenerate>("generateJooq") { allInputsDeclared.set(true) }
+
 
 fun getSecrete(key: String): String? {
     return if (System.getenv().containsKey(key)) {
