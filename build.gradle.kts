@@ -1,3 +1,8 @@
+import io.github.realyusufismail.jconfig.*
+import nu.studer.gradle.jooq.JooqEdition
+import org.jooq.meta.jaxb.ForcedType
+import org.jooq.meta.jaxb.Logging
+
 buildscript {
     repositories { mavenCentral() }
     dependencies {
@@ -14,7 +19,10 @@ plugins {
 }
 
 group = "io.github.yip"
+
 version = "1.0-SNAPSHOT"
+
+val config: JConfig = JConfig.build()
 
 repositories { mavenCentral() }
 
@@ -79,3 +87,70 @@ spotless {
 kotlin { jvmToolchain(11) }
 
 application { mainClass.set("TheIslamicDiscordBot") }
+
+// jooq
+jooq {
+    version.set("3.18.0")
+    edition.set(JooqEdition.OSS)
+    configurations {
+        create("main") {
+            generateSchemaSourceOnCompilation.set(false)
+            jooqConfiguration.apply {
+                logging = Logging.WARN
+                jdbc.apply {
+                    driver = "org.postgresql.Driver"
+                    url = getSecrete("DB_URL") ?: ""
+                    user = getSecrete("DB_USER") ?: ""
+                    password = getSecrete("DB_PASSWORD") ?: ""
+                }
+                generator.apply {
+                    name = "org.jooq.codegen.DefaultGenerator"
+                    database.apply {
+                        name = "org.jooq.meta.postgres.PostgresDatabase"
+                        inputSchema = "public"
+                        forcedTypes.addAll(
+                            listOf(
+                                ForcedType().apply {
+                                    name = "varchar"
+                                    includeExpression = ".*"
+                                    includeTypes = "JSONB?"
+                                },
+                                ForcedType().apply {
+                                    name = "varchar"
+                                    includeExpression = ".*"
+                                    includeTypes = "INET"
+                                },
+                                ForcedType().apply {
+                                    name = "INSTANT"
+                                    includeExpression = ".*"
+                                    includeTypes = "TIMESTAMP"
+                                }))
+                    }
+                    generate.apply {
+                        isDeprecated = false
+                        isRecords = true
+                        isImmutablePojos = true
+                        isFluentSetters = true
+                    }
+                    target.apply {
+                        packageName = "io.github.yip.db"
+                        directory = "build/generated-src/jooq/main" // default (can be omitted)
+                    }
+                    strategy.name = "org.jooq.codegen.DefaultGeneratorStrategy"
+                }
+            }
+        }
+    }
+}
+
+fun getSecrete(key: String): String? {
+    return if (System.getenv().containsKey(key)) {
+        System.getenv(key)
+    } else if (System.getProperties().containsKey(key)) {
+        System.getProperty(key)
+    } else if (config.contains(key)) {
+        config[key]?.asString
+    } else {
+        null
+    }
+}
