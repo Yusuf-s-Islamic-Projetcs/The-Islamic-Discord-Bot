@@ -29,7 +29,7 @@ repositories { mavenCentral() }
 
 dependencies {
     // YDWK
-    implementation("io.github.realyusufismail:ydwk:1.3.0")
+    implementation("io.github.realyusufismail:ydwk:1.22.0")
     // JOOQ
     implementation("org.jooq:jooq:3.18.0")
     implementation("org.jooq:jooq-meta:3.18.0")
