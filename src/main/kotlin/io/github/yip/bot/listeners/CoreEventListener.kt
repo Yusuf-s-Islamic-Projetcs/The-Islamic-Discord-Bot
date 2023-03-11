@@ -29,7 +29,9 @@ class CoreEventListener : CoreListeners {
 
     override fun onReady(event: ReadyEvent) {
         mainLogger.info("Ready to serve ${event.totalGuildsAmount} guilds")
-        database.getDataSource().connection.use { connection -> HandleDataBaseTables(connection) }
+        database.getDataSource().connection.createStatement().use {
+            HandleDataBaseTables(it)
+        }
     }
 
     override fun onShutDown(event: ShutDownEvent) {

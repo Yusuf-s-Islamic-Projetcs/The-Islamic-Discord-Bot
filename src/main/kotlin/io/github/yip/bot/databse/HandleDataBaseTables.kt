@@ -18,20 +18,21 @@
  */ 
 package io.github.yip.bot.databse
 
-import java.sql.Connection
+import io.github.yip.bot.mainLogger
+import java.sql.Statement
 
-class HandleDataBaseTables(connection: Connection) {
+class HandleDataBaseTables(statement: Statement) {
     init {
-        addTables(connection)
+        mainLogger.info("Creating tables")
+        addTables(statement)
     }
 
-    private fun addTables(connection: Connection) {
-        addQuranReciterTable(connection)
+    private fun addTables(statement: Statement) {
+        addQuranReciterTable(statement)
     }
 
-    private fun addQuranReciterTable(connection: Connection) {
-        connection
-            .createStatement()
+    private fun addQuranReciterTable(statement: Statement) {
+        statement
             .executeUpdate(
                 """
             CREATE TABLE IF NOT EXISTS quran_reciter (
