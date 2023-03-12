@@ -32,12 +32,16 @@ class HandleDataBaseTables(dslContext: DSLContext) {
     }
 
     private fun addQuranReciterTable(dslContext: DSLContext) {
-        dslContext.createTableIfNotExists("quran_reciter")
-            .column("user_id", SQLDataType.BIGINT.identity(true))
-            .column("reciter_id", SQLDataType.BIGINT)
-            .constraints(
-                constraint("pk_id").primaryKey("user_id")
-            )
-            .execute()
+        try {
+            dslContext.createTableIfNotExists("quran_reciter")
+                .column("user_id", SQLDataType.BIGINT.identity(true))
+                .column("reciter_id", SQLDataType.BIGINT)
+                .constraints(
+                    constraint("pk_id").primaryKey("user_id")
+                )
+                .executeAsync { mainLogger.info("Created table quran_reciter") }
+        } catch (e: Exception) {
+            mainLogger.error("Error creating table quran_reciter", e)
+        }
     }
 }
