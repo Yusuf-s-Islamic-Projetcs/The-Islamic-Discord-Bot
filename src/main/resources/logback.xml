@@ -38,27 +38,11 @@
             <maxHistory>30</maxHistory>
         </rollingPolicy>
     </appender>
-    <logger name="io.github.yip.bot" level="${LOG_LEVEL:-INFO}" additivity="false">
-        <appender-ref ref="STDOUT"/>
-        <appender-ref ref="LOGFILE"/>
-    </logger>
-    <logger name="io.github.yip.bot" level="${LOG_LEVEL:-WARN}" additivity="false">
-        <appender-ref ref="STDOUT"/>
-        <appender-ref ref="LOGFILE"/>
-    </logger>
     <logger name="io.github.ydwk.ydwk" level="${LOG_LEVEL:-INFO}" additivity="false">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="LOGFILE"/>
     </logger>
-    <logger name="io.github.ydwk.ydwk" level="${LOG_LEVEL:-WARN}" additivity="false">
-        <appender-ref ref="STDOUT"/>
-        <appender-ref ref="LOGFILE"/>
-    </logger>
-    <root level="${ROOT_LOG_LEVEL:-WARN}">
-        <appender-ref ref="STDOUT"/>
-        <appender-ref ref="LOGFILE"/>
-    </root>
-    <root level="${ROOT_LOG_LEVEL:-DEBUG}">
+    <root level="INFO">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="LOGFILE"/>
     </root>

@@ -27,6 +27,7 @@ import org.jooq.impl.DSL
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+
 class Database {
     private val logger: Logger = LoggerFactory.getLogger(Database::class.java)
     private val config: HikariConfig = HikariConfig()
@@ -46,11 +47,13 @@ class Database {
         dataSource = HikariDataSource(config)
         dslContext = DSL.using(dataSource, SQLDialect.POSTGRES)
 
-        logger.info("Database connection established")
-    }
+        logger.info("Database connection established, will now attempt to create tables or update them")
 
-    fun getDataSource(): HikariDataSource {
-        return dataSource
+        try {
+            HandleDataBaseTables(dslContext)
+        } catch (e: Exception) {
+            logger.error("Failed to create or update tables", e)
+        }
     }
 
     fun close() {

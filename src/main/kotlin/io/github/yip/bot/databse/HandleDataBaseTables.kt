@@ -19,28 +19,25 @@
 package io.github.yip.bot.databse
 
 import io.github.yip.bot.mainLogger
-import java.sql.Statement
+import org.jooq.DSLContext
+import org.jooq.impl.DSL.constraint
+import org.jooq.impl.SQLDataType
 
-class HandleDataBaseTables(statement: Statement) {
+class HandleDataBaseTables(dslContext: DSLContext) {
+
     init {
         mainLogger.info("Creating tables")
-        addTables(statement)
+
+        addQuranReciterTable(dslContext)
     }
 
-    private fun addTables(statement: Statement) {
-        addQuranReciterTable(statement)
-    }
-
-    private fun addQuranReciterTable(statement: Statement) {
-        statement
-            .executeUpdate(
-                """
-            CREATE TABLE IF NOT EXISTS quran_reciter (
-                userId BIGINT NOT NULL,
-                reciterId INT NOT NULL,
-                UNIQUE (userId, reciterId)
-            );
-            """
-                    .trimIndent())
+    private fun addQuranReciterTable(dslContext: DSLContext) {
+        dslContext.createTableIfNotExists("quran_reciter")
+            .column("user_id", SQLDataType.BIGINT.identity(true))
+            .column("reciter_id", SQLDataType.BIGINT)
+            .constraints(
+                constraint("pk_id").primaryKey("user_id")
+            )
+            .execute()
     }
 }
