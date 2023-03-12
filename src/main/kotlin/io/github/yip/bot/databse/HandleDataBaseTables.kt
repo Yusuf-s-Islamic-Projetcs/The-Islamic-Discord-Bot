@@ -18,29 +18,32 @@
  */ 
 package io.github.yip.bot.databse
 
+import com.zaxxer.hikari.HikariDataSource
 import io.github.yip.bot.mainLogger
 import org.jooq.DSLContext
+import org.jooq.impl.DSL
 import org.jooq.impl.DSL.constraint
 import org.jooq.impl.SQLDataType
 
-class HandleDataBaseTables(dslContext: DSLContext) {
+object HandleDataBaseTables {
 
-    init {
-        mainLogger.info("Creating tables")
-
-        addQuranReciterTable(dslContext)
+    fun handleTables(create: DSLContext) {
+        addQuranReciterTable(create)
     }
 
-    private fun addQuranReciterTable(dslContext: DSLContext) {
-        try {
-            dslContext
-                .createTableIfNotExists("quran_reciter")
-                .column("user_id", SQLDataType.BIGINT.identity(true))
-                .column("reciter_id", SQLDataType.BIGINT)
-                .constraints(constraint("pk_id").primaryKey("user_id"))
-                .executeAsync { mainLogger.info("Created table quran_reciter") }
-        } catch (e: Exception) {
-            mainLogger.error("Error creating table quran_reciter", e)
-        }
+    private fun addQuranReciterTable(create: DSLContext) {
+        create.createTableIfNotExists("quran_reciter")
+            .column("user_id", SQLDataType.BIGINT.nullable(false))
+            .column("quran_reciter_id", SQLDataType.BIGINT.nullable(false))
+            .constraints(
+                constraint("quran_reciter_pk").primaryKey("user_id"),
+                constraint("quran_reciter_fk").foreignKey("quran_reciter_id").references("quran_reciter", "id")
+            )
+            .execute()
+    }
+
+    fun addTablesToDatabase(dataSource: HikariDataSource) {
+        val create = dataSource.connection.use { DSL.using(it) }
+        handleTables(create)
     }
 }

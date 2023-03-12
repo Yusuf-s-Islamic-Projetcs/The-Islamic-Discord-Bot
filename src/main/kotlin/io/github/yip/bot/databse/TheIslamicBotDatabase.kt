@@ -20,15 +20,19 @@ package io.github.yip.bot.databse
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import io.github.yip.bot.databse.HandleDataBaseTables.addTablesToDatabase
+import io.github.yip.bot.databse.HandleDataBaseTables.handleTables
 import io.github.yip.bot.jConfig
 import org.jooq.DSLContext
 import org.jooq.SQLDialect
 import org.jooq.impl.DSL
+import org.jooq.impl.DefaultConfiguration
+import org.jooq.meta.jaxb.Jdbc
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-class Database {
-    private val logger: Logger = LoggerFactory.getLogger(Database::class.java)
+class TheIslamicBotDatabase {
+    private val logger: Logger = LoggerFactory.getLogger(TheIslamicBotDatabase::class.java)
     private val config: HikariConfig = HikariConfig()
     private var dataSource: HikariDataSource
     private var dslContext: DSLContext
@@ -50,9 +54,9 @@ class Database {
             "Database connection established, will now attempt to create tables or update them")
 
         try {
-            HandleDataBaseTables(dslContext)
+            addTablesToDatabase(dataSource)
         } catch (e: Exception) {
-            logger.error("Failed to create or update tables", e)
+            logger.error("Error creating tables", e)
         }
     }
 

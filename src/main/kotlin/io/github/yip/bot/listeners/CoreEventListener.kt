@@ -32,6 +32,6 @@ class CoreEventListener : CoreListeners {
 
     override fun onShutDown(event: ShutDownEvent) {
         mainLogger.warn("Shutting down for ${event.closeCode.getReason()}")
-        database.close()
+        database?.close() ?: mainLogger.warn("Database is null")
     }
 }
