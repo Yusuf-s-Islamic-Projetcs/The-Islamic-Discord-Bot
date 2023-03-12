@@ -18,8 +18,8 @@
  */ 
 package io.github.yip.bot.databse
 
-import com.zaxxer.hikari.HikariDataSource
-import io.github.yip.bot.mainLogger
+import java.sql.Connection
+import java.sql.SQLException
 import org.jooq.DSLContext
 import org.jooq.impl.DSL
 import org.jooq.impl.DSL.constraint
@@ -32,18 +32,20 @@ object HandleDataBaseTables {
     }
 
     private fun addQuranReciterTable(create: DSLContext) {
-        create.createTableIfNotExists("quran_reciter")
+        create
+            .createTableIfNotExists("quran_reciter")
             .column("user_id", SQLDataType.BIGINT.nullable(false))
             .column("quran_reciter_id", SQLDataType.BIGINT.nullable(false))
             .constraints(
                 constraint("quran_reciter_pk").primaryKey("user_id"),
-                constraint("quran_reciter_fk").foreignKey("quran_reciter_id").references("quran_reciter", "id")
-            )
+                constraint("quran_reciter_fk")
+                    .foreignKey("quran_reciter_id")
+                    .references("quran_reciter", "id"))
             .execute()
     }
 
-    fun addTablesToDatabase(dataSource: HikariDataSource) {
-        val create = dataSource.connection.use { DSL.using(it) }
+    fun addTablesToDatabase(connection: Connection?) {
+        val create = connection?.let { DSL.using(it) } ?: throw SQLException("Connection is null")
         handleTables(create)
     }
 }

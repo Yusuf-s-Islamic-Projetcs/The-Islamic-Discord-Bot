@@ -21,13 +21,12 @@ package io.github.yip.bot.databse
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.github.yip.bot.databse.HandleDataBaseTables.addTablesToDatabase
-import io.github.yip.bot.databse.HandleDataBaseTables.handleTables
 import io.github.yip.bot.jConfig
+import java.sql.Connection
+import java.sql.SQLException
 import org.jooq.DSLContext
 import org.jooq.SQLDialect
 import org.jooq.impl.DSL
-import org.jooq.impl.DefaultConfiguration
-import org.jooq.meta.jaxb.Jdbc
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -54,9 +53,18 @@ class TheIslamicBotDatabase {
             "Database connection established, will now attempt to create tables or update them")
 
         try {
-            addTablesToDatabase(dataSource)
+            addTablesToDatabase(getConnection())
         } catch (e: Exception) {
             logger.error("Error creating tables", e)
+        }
+    }
+
+    fun getConnection(): Connection? {
+        return try {
+            dataSource.connection
+        } catch (e: SQLException) {
+            logger.error("Error while getting connection", e)
+            null
         }
     }
 
