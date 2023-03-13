@@ -24,30 +24,40 @@ import io.github.yip.bot.databse.HandleDataBaseTables.addTablesToDatabase
 import io.github.yip.bot.jConfig
 import java.sql.Connection
 import java.sql.SQLException
-import org.jooq.DSLContext
-import org.jooq.SQLDialect
-import org.jooq.impl.DSL
+import java.util.*
+import kotlin.Exception
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 class TheIslamicBotDatabase {
     private val logger: Logger = LoggerFactory.getLogger(TheIslamicBotDatabase::class.java)
-    private val config: HikariConfig = HikariConfig()
+    private var config: HikariConfig = HikariConfig()
     private var dataSource: HikariDataSource
-    private var dslContext: DSLContext
 
     init {
-        config.jdbcUrl = jConfig["DB_URL"]?.asString ?: throw Exception("JDBC URL not found")
-        config.username = jConfig["DB_USER"]?.asString ?: throw Exception("Username not found")
-        config.password = jConfig["DB_PASSWORD"]?.asString ?: throw Exception("Password not found")
-        config.driverClassName = "org.postgresql.Driver"
-        config.maximumPoolSize = 10
-        config.isAutoCommit = false
-        config.transactionIsolation = "TRANSACTION_REPEATABLE_READ"
-        config.validate()
+        val props = Properties()
+        props.setProperty("dataSourceClassName", "org.postgresql.ds.PGSimpleDataSource")
+        props.setProperty(
+            "dataSource.user",
+            jConfig["DB_USER"]?.asString ?: throw Exception("Database user not found"))
+        props.setProperty(
+            "dataSource.password",
+            jConfig["DB_PASSWORD"]?.asString ?: throw Exception("Database password not found"))
+        props.setProperty(
+            "dataSource.databaseName",
+            jConfig["DB_NAME"]?.asString ?: throw Exception("Database name not found"))
+        props.setProperty(
+            "dataSource.portNumber",
+            jConfig["DB_PORT"]?.asString ?: throw Exception("Database port not found"))
+        props.setProperty(
+            "dataSource.serverName",
+            jConfig["DB_HOST"]?.asString ?: throw Exception("Database host not found"))
+        props.setProperty("maximumPoolSize", "10")
+        props.setProperty("minimumIdle", "5")
+        props.setProperty("idleTimeout", "30000")
 
+        config = HikariConfig(props)
         dataSource = HikariDataSource(config)
-        dslContext = DSL.using(dataSource, SQLDialect.POSTGRES)
 
         logger.info(
             "Database connection established, will now attempt to create tables or update them")

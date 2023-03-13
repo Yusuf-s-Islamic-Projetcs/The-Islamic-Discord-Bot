@@ -13,10 +13,14 @@ To contribute you will not create a config.json file in the root directory. This
 
 ```json
 {
-    "TOKEN": "YOUR_TOKEN_HERE",
-    "DB_URL" : "YOUR_DB_URL_HERE",
-    "DB_USER" : "YOUR_DB_NAME_HERE",
-    "DB_PASSWORD" : "YOUR_DB_PASS_HERE"
+  "TOKEN": "TOKEN",
+  "DB_USER": "USER",
+  "DB_PASSWORD": "PASSWORD",
+  "DB_DRIVER": "org.postgresql.Driver",
+  "DB_PORT": "PORT",
+  "DB_NAME": "postgres",
+  "DB_HOST": "HOST",
+  "DB_URL": "jdbc:postgresql://HOST:PORT/postgres"
 }
 ```
 

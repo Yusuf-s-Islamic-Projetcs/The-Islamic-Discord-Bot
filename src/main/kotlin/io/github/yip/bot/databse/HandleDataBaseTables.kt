@@ -20,14 +20,14 @@ package io.github.yip.bot.databse
 
 import java.sql.Connection
 import java.sql.SQLException
+import java.util.*
 import org.jooq.DSLContext
 import org.jooq.impl.DSL
-import org.jooq.impl.DSL.constraint
 import org.jooq.impl.SQLDataType
 
 object HandleDataBaseTables {
 
-    fun handleTables(create: DSLContext) {
+    private fun handleTables(create: DSLContext) {
         addQuranReciterTable(create)
     }
 
@@ -36,11 +36,6 @@ object HandleDataBaseTables {
             .createTableIfNotExists("quran_reciter")
             .column("user_id", SQLDataType.BIGINT.nullable(false))
             .column("quran_reciter_id", SQLDataType.BIGINT.nullable(false))
-            .constraints(
-                constraint("quran_reciter_pk").primaryKey("user_id"),
-                constraint("quran_reciter_fk")
-                    .foreignKey("quran_reciter_id")
-                    .references("quran_reciter", "id"))
             .execute()
     }
 
