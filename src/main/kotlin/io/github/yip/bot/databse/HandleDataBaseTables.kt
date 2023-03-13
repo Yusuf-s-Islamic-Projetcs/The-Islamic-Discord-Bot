@@ -52,9 +52,7 @@ object HandleDataBaseTables {
                 }
                 for (tableName in tableNames) {
                     if (!tables.contains(tableName)) {
-                        create
-                            .dropTable(tableName)
-                            .execute()
+                        create.dropTable(tableName).execute()
                     }
                 }
             }
