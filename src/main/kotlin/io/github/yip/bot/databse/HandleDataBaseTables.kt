@@ -26,7 +26,7 @@ import org.jooq.impl.DSL
 import org.jooq.impl.SQLDataType
 
 object HandleDataBaseTables {
-    val tables = ArrayList<String>()
+    private val tables = ArrayList<String>()
 
     private fun handleTables(create: DSLContext) {
         addQuranReciterTable(create)
@@ -39,11 +39,6 @@ object HandleDataBaseTables {
     }
 
     private fun checkTables(create: DSLContext) {
-        // check if tables exist
-        // if they don't exist, create them
-        // if they exist, check if they need to be updated
-        // finally if the tables name no longer exists within the list, delete them
-
         create
             .select()
             .from("information_schema.tables")
@@ -51,8 +46,16 @@ object HandleDataBaseTables {
             .fetch()
             .intoResultSet()
             .use { rs ->
+                val tableNames = ArrayList<String>()
                 while (rs.next()) {
-                   //TODO: check if tables need to be updated
+                    tableNames.add(rs.getString("table_name"))
+                }
+                for (tableName in tableNames) {
+                    if (!tables.contains(tableName)) {
+                        create
+                            .dropTable(tableName)
+                            .execute()
+                    }
                 }
             }
     }
