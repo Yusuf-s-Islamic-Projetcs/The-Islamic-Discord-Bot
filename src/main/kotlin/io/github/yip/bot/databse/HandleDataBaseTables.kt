@@ -18,6 +18,7 @@
  */ 
 package io.github.yip.bot.databse
 
+import org.jooq.CreateTableElementListStep
 import java.sql.Connection
 import java.sql.SQLException
 import java.util.*
@@ -26,17 +27,28 @@ import org.jooq.impl.DSL
 import org.jooq.impl.SQLDataType
 
 object HandleDataBaseTables {
+    val tables = ArrayList<CreateTableElementListStep>()
 
     private fun handleTables(create: DSLContext) {
         addQuranReciterTable(create)
     }
 
+    private fun checkTables(create: DSLContext) {
+        //check if tables exist
+        //if they don't exist, create them
+        //if they exist and no longer needed, drop them
+        TODO()
+    }
+
     private fun addQuranReciterTable(create: DSLContext) {
-        create
+        val table = create
             .createTableIfNotExists("quran_reciter")
             .column("user_id", SQLDataType.BIGINT.nullable(false))
             .column("quran_reciter_id", SQLDataType.BIGINT.nullable(false))
-            .execute()
+
+        tables.add(table)
+
+        table.execute()
     }
 
     fun addTablesToDatabase(connection: Connection?) {
