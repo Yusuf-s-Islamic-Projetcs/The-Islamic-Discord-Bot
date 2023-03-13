@@ -18,7 +18,6 @@
  */ 
 package io.github.yip.bot.databse
 
-import org.jooq.CreateTableElementListStep
 import java.sql.Connection
 import java.sql.SQLException
 import java.util.*
@@ -27,28 +26,47 @@ import org.jooq.impl.DSL
 import org.jooq.impl.SQLDataType
 
 object HandleDataBaseTables {
-    val tables = ArrayList<CreateTableElementListStep>()
+    val tables = ArrayList<String>()
 
     private fun handleTables(create: DSLContext) {
         addQuranReciterTable(create)
+
+        try {
+            checkTables(create)
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        }
     }
 
     private fun checkTables(create: DSLContext) {
-        //check if tables exist
-        //if they don't exist, create them
-        //if they exist and no longer needed, drop them
-        TODO()
+        // check if tables exist
+        // if they don't exist, create them
+        // if they exist, check if they need to be updated
+        // finally if the tables name no longer exists within the list, delete them
+
+        create
+            .select()
+            .from("information_schema.tables")
+            .where("table_schema = 'public'")
+            .fetch()
+            .intoResultSet()
+            .use { rs ->
+                while (rs.next()) {
+                   //TODO: check if tables need to be updated
+                }
+            }
     }
 
     private fun addQuranReciterTable(create: DSLContext) {
-        val table = create
-            .createTableIfNotExists("quran_reciter")
-            .column("user_id", SQLDataType.BIGINT.nullable(false))
-            .column("quran_reciter_id", SQLDataType.BIGINT.nullable(false))
-
-        tables.add(table)
+        val table =
+            create
+                .createTableIfNotExists("quran_reciter")
+                .column("user_id", SQLDataType.BIGINT.nullable(false))
+                .column("quran_reciter_id", SQLDataType.BIGINT.nullable(false))
 
         table.execute()
+
+        tables.add("quran_reciter")
     }
 
     fun addTablesToDatabase(connection: Connection?) {
