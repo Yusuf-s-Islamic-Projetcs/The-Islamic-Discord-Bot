@@ -21,15 +21,18 @@ package io.github.yip.bot.databse
 import java.sql.Connection
 import java.sql.SQLException
 import java.util.*
+import kotlin.collections.Map
 import org.jooq.DSLContext
+import org.jooq.DataType
 import org.jooq.impl.DSL
 import org.jooq.impl.SQLDataType
 
 object HandleDataBaseTables {
-    private val tables = ArrayList<String>()
+    val tables = ArrayList<String>()
+    val tablesColumns = mutableMapOf<String, Map<String, DataType<*>>>()
 
     private fun handleTables(create: DSLContext) {
-        addQuranReciterTable(create)
+        DatabaseTables(create)
 
         try {
             checkTables(create)
@@ -56,18 +59,51 @@ object HandleDataBaseTables {
                     }
                 }
             }
+
+        // now check for any changes in the columns
+
+        create
+            .select()
+            .from("information_schema.columns")
+            .where("table_schema = 'public'")
+            .fetch()
+            .intoResultSet()
+            .use { rs ->
+                val columnNames = ArrayList<String>()
+                while (rs.next()) {
+                    columnNames.add(rs.getString("column_name"))
+                }
+                for (tableName in tables) {
+                    if (tablesColumns.containsKey(tableName)) {
+                        val columns = tablesColumns[tableName]
+                        for (column in columns!!) {
+                            if (!columnNames.contains(column.key)) {
+                                // add the column
+                                create
+                                    .alterTable(tableName)
+                                    .addColumn(column.key, column.value)
+                                    .execute()
+                            }
+                        }
+                    }
+                }
+            }
     }
 
     private fun addQuranReciterTable(create: DSLContext) {
-        val table =
-            create
-                .createTableIfNotExists("quran_reciter")
-                .column("user_id", SQLDataType.BIGINT.nullable(false))
-                .column("quran_reciter_id", SQLDataType.BIGINT.nullable(false))
+        tables.add("quran_reciter")
+
+        val columns = mutableMapOf<String, DataType<*>>()
+        columns["user_id"] = SQLDataType.BIGINT.nullable(false)
+        columns["quran_reciter_id"] = SQLDataType.BIGINT.nullable(false)
+
+        val table = create.createTableIfNotExists("quran_reciter")
+
+        for (column in columns) {
+            table.column(column.key, column.value)
+        }
 
         table.execute()
-
-        tables.add("quran_reciter")
     }
 
     fun addTablesToDatabase(connection: Connection?) {
