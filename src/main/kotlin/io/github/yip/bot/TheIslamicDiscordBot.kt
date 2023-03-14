@@ -23,6 +23,8 @@ import io.github.ydwk.ydwk.BotBuilder.createDefaultBot
 import io.github.ydwk.ydwk.YDWK
 import io.github.yip.bot.databse.TheIslamicBotDatabase
 import io.github.yip.bot.listeners.CoreEventListener
+import io.github.yip.bot.listeners.handler.button.ButtonHandler
+import io.github.yip.bot.listeners.handler.slash.AutoSlashAdder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -40,5 +42,5 @@ fun main() {
     val ydwk: YDWK =
         createDefaultBot(jConfig["TOKEN"]?.asString ?: throw Exception("Token not found")).build()
 
-    ydwk.addEventListeners(CoreEventListener())
+    ydwk.addEventListeners(CoreEventListener(), AutoSlashAdder(ydwk), ButtonHandler())
 }
