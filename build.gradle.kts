@@ -27,7 +27,7 @@ repositories { mavenCentral() }
 
 dependencies {
     // YDWK
-    implementation("io.github.realyusufismail:ydwk:1.3.5")
+    implementation("io.github.realyusufismail:ydwk:1.4.0")
     // JOOQ
     implementation("org.jooq:jooq:3.18.0")
     implementation("org.jooq:jooq-meta:3.18.0")
@@ -40,7 +40,7 @@ dependencies {
     implementation("org.postgresql:postgresql:42.5.4")
     jooqGenerator("org.postgresql:postgresql:42.5.4")
     implementation("com.zaxxer:HikariCP:5.0.1")
-    //classgraph
+    // classgraph
     implementation("io.github.classgraph:classgraph:4.8.154")
     // test
     testImplementation(kotlin("test"))

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 YDWK inc.
+ * Copyright 2022 Yusuf's Islamic projects.
  *
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -8,7 +8,7 @@
  *
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,7 +29,9 @@ class AutoSlashAdder(ydwk: YDWK) : SlashHandler(ydwk) {
                 .filter { it.implementsInterface(SlashCommandExtender::class.java) }
                 .mapNotNull { classInfo ->
                     runCatching { classInfo.loadClass() as? Class<out SlashCommandExtender> }
-                        .onFailure { mainLogger.error("Failed to load class ${classInfo.name}", it) }
+                        .onFailure {
+                            mainLogger.error("Failed to load class ${classInfo.name}", it)
+                        }
                         .getOrNull()
                 }
         }
