@@ -19,28 +19,39 @@
 package io.github.yip.bot.commands.misc
 
 import io.github.ydwk.yde.interaction.application.type.SlashCommand
+import io.github.ydwk.ydwk.YDWKInfo
 import io.github.ydwk.ydwk.util.ydwk
+import io.github.ydwk.ydwk.ws.util.formatInstant
 import io.github.yip.bot.listeners.handler.slash.SlashCommandExtender
+import java.awt.Color
 
 class InfoCommand : SlashCommandExtender {
     override fun onSlashCommand(event: SlashCommand) {
         val embed = event.ydwk.embedBuilder
-        val guild = event.guild ?: return
 
         embed.setTitle("Info about The Islamic Bot")
         embed.setDescription(
             "The Islamic Bot is a bot that provides Islamic information and services to the Discord community.")
+        embed.setColor(Color.decode("#00A86B"))
+        embed.addField("Guilds", event.yde.getGuilds().size.toString(), true)
+        embed.addField("Users", event.yde.getUsers().size.toString(), true)
+        embed.addField("Channels", event.yde.getChannels().size.toString(), true)
+        embed.addField("Uptime", formatInstant(event.ydwk.uptime), true)
+        embed.addField("Bot Version", "1.0-SNAPSHOT", true)
+        embed.addField("YDWK Version", YDWKInfo.YDWK_VERSION.getUrl(), true)
+
+        event.reply(embed.build()).trigger()
     }
 
     override fun name(): String {
-        TODO("Not yet implemented")
+        return "info"
     }
 
     override fun description(): String {
-        TODO("Not yet implemented")
+        return "Get info about the bot"
     }
 
     override fun isGuildOnly(): Boolean {
-        TODO("Not yet implemented")
+        return false
     }
 }

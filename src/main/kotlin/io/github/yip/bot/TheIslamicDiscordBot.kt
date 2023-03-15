@@ -36,11 +36,11 @@ val mainLogger: Logger = LoggerFactory.getLogger(TheIslamicDiscordBot::class.jav
 
 var database: TheIslamicBotDatabase? = null
 
-fun main() {
-    database = TheIslamicBotDatabase()
-
+suspend fun main() {
     val ydwk: YDWK =
         createDefaultBot(jConfig["TOKEN"]?.asString ?: throw Exception("Token not found")).build()
 
-    ydwk.addEventListeners(CoreEventListener(), AutoSlashAdder(ydwk), ButtonHandler())
+    ydwk.awaitReady().addEventListeners(CoreEventListener(), AutoSlashAdder(ydwk), ButtonHandler())
+
+    database = TheIslamicBotDatabase()
 }
