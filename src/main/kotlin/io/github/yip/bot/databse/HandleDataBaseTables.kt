@@ -18,6 +18,7 @@
  */ 
 package io.github.yip.bot.databse
 
+import io.github.yip.bot.mainLogger
 import java.sql.Connection
 import java.sql.SQLException
 import java.util.*
@@ -25,7 +26,6 @@ import kotlin.collections.Map
 import org.jooq.DSLContext
 import org.jooq.DataType
 import org.jooq.impl.DSL
-import org.jooq.impl.SQLDataType
 
 object HandleDataBaseTables {
     val tables = ArrayList<String>()
@@ -55,6 +55,8 @@ object HandleDataBaseTables {
                 }
                 for (tableName in tableNames) {
                     if (!tables.contains(tableName)) {
+                        mainLogger.info(
+                            "Table $tableName is not in the list of tables, dropping it")
                         create.dropTable(tableName).execute()
                     }
                 }
@@ -79,6 +81,8 @@ object HandleDataBaseTables {
                         for (column in columns!!) {
                             if (!columnNames.contains(column.key)) {
                                 // add the column
+                                mainLogger.info(
+                                    "Column ${column.key} is not in the list of columns, adding it")
                                 create
                                     .alterTable(tableName)
                                     .addColumn(column.key, column.value)
@@ -88,22 +92,6 @@ object HandleDataBaseTables {
                     }
                 }
             }
-    }
-
-    private fun addQuranReciterTable(create: DSLContext) {
-        tables.add("quran_reciter")
-
-        val columns = mutableMapOf<String, DataType<*>>()
-        columns["user_id"] = SQLDataType.BIGINT.nullable(false)
-        columns["quran_reciter_id"] = SQLDataType.BIGINT.nullable(false)
-
-        val table = create.createTableIfNotExists("quran_reciter")
-
-        for (column in columns) {
-            table.column(column.key, column.value)
-        }
-
-        table.execute()
     }
 
     fun addTablesToDatabase(connection: Connection?) {
