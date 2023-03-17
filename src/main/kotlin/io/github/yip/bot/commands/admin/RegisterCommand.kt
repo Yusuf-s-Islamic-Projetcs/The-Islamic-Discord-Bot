@@ -77,7 +77,7 @@ class RegisterCommand : SlashCommandExtender {
             val reciters = mutableListOf<SlashOptionChoice>()
             ClassGraph().enableAllInfo().scan().use { scanResult ->
                 val reciterClasses =
-                    scanResult.getClassesImplementing(Reciter::class.java.`package`.name)
+                    scanResult.getClassesImplementing(Reciter::class.java.name)
                 reciterClasses.forEach { reciterClass ->
                     val reciter = reciterClass.loadClass().getConstructor().newInstance() as Reciter
                     reciters.add(SlashOptionChoice(reciter.name, reciter.reciterId))
