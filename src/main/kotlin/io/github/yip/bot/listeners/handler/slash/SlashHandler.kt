@@ -61,7 +61,11 @@ open class SlashHandler(private val ydwk: YDWK) : InteractionListeners {
 
     override fun onSlashCommand(event: SlashCommandEvent) {
         // check if the user has added required info
-        checkIfUserExists(event)
+        if (event.slash.name != "register" && event.slash.name != "help") {
+            if (!checkIfUserExists(event)) {
+                return
+            }
+        }
 
         slashCommand.forEach { (name, cmd) ->
             if (name == event.slash.name) {

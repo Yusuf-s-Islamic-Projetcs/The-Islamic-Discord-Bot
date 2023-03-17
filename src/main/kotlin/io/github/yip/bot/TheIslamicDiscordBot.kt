@@ -25,10 +25,10 @@ import io.github.yip.bot.databse.TheIslamicBotDatabase
 import io.github.yip.bot.listeners.CoreEventListener
 import io.github.yip.bot.listeners.handler.button.ButtonHandler
 import io.github.yip.bot.listeners.handler.slash.AutoSlashAdder
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import java.sql.SQLException
 import kotlin.system.exitProcess
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 class TheIslamicDiscordBot
 
@@ -49,28 +49,30 @@ suspend fun main() {
     Runtime.getRuntime()
         .addShutdownHook(
             Thread {
-                mainLogger.info("Shutting down...")
+                    mainLogger.info("Shutting down...")
 
-                if (database != null && !database!!.dataSource.isClosed) {
+                    if (database != null && !database!!.dataSource.isClosed) {
+                        try {
+                            mainLogger.info("Closing database connection...")
+                            database!!.dataSource.connection.close()
+                        } catch (e: SQLException) {
+                            mainLogger.error("Error while closing database connection!")
+                            e.printStackTrace()
+                        }
+                    }
+
                     try {
-                        mainLogger.info("Closing database connection...")
-                        database!!.dataSource.connection.close()
-                    } catch (e: SQLException) {
-                        mainLogger.error("Error while closing database connection!")
+                        mainLogger.info("Closing bot...")
+                        ydwk.shutdownAPI()
+                    } catch (e: Exception) {
+                        mainLogger.error("Error while closing bot!")
                         e.printStackTrace()
                     }
+
+                    mainLogger.info("Shutdown complete!")
+
+                    // stop the program
+                    exitProcess(0)
                 }
-
-                try {
-                    mainLogger.info("Closing bot...")
-                    ydwk.shutdownAPI()
-                } catch (e: Exception) {
-                    mainLogger.error("Error while closing bot!")
-                    e.printStackTrace()
-                }
-
-                mainLogger.info("Shutdown complete!")
-
-                exitProcess(0)
-            })
+                .apply { name = "ShutdownHook" })
 }

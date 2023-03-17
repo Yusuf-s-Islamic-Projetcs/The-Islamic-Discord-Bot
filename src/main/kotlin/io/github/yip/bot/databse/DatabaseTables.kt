@@ -31,12 +31,12 @@ class DatabaseTables(create: DSLContext) {
         columns["quran_reciter_id"] = SQLDataType.BIGINT.nullable(false)
         columns["islamic_school"] = SQLDataType.VARCHAR(255).nullable(false)
 
-        val ut = create.createTableIfNotExists("user_settings")
+        val ut = create.createTableIfNotExists("user_islamic_info_settings")
         columns.forEach { (key, value) -> ut.column(key, value) }
         ut.primaryKey("user_id")
         ut.execute()
 
-        HandleDataBaseTables.tables.add("user_settings")
-        HandleDataBaseTables.tablesColumns["user_settings"] = columns
+        HandleDataBaseTables.tables.add("user_islamic_info_settings")
+        HandleDataBaseTables.tablesColumns["user_islamic_info_settings"] = columns
     }
 }

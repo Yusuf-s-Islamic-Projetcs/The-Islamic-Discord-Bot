@@ -18,29 +18,46 @@
  */ 
 package io.github.yip.bot.user
 
+import io.github.ydwk.yde.interaction.message.button.Button
+import io.github.ydwk.yde.interaction.message.button.ButtonStyle
 import io.github.ydwk.ydwk.evm.event.events.interaction.slash.SlashCommandEvent
 import io.github.yip.bot.database
-import io.github.yip.db.tables.UserSettings
+import io.github.yip.db.tables.UserIslamicInfoSettings
 
 object UserIslamicInfoDatabase {
-    val context = database?.context ?: throw IllegalStateException("Database context is null")
+    private val context = database?.context ?: throw IllegalStateException("Database context is null")
+
+    fun updateUserIslamicInfoDatabase(userId : Long, quranReciterId : Long, islamicSchool : String) {
+        context
+            .insertInto(UserIslamicInfoSettings.USER_ISLAMIC_INFO_SETTINGS, UserIslamicInfoSettings.USER_ISLAMIC_INFO_SETTINGS.USER_ID,
+                UserIslamicInfoSettings.USER_ISLAMIC_INFO_SETTINGS.QURAN_RECITER_ID, UserIslamicInfoSettings.USER_ISLAMIC_INFO_SETTINGS.ISLAMIC_SCHOOL)
+            .values(userId, quranReciterId, islamicSchool)
+            .onDuplicateKeyUpdate()
+            .set(UserIslamicInfoSettings.USER_ISLAMIC_INFO_SETTINGS.QURAN_RECITER_ID, quranReciterId)
+            .set(UserIslamicInfoSettings.USER_ISLAMIC_INFO_SETTINGS.ISLAMIC_SCHOOL, islamicSchool)
+            .execute()
+    }
+
+    /**
+     * Check if the user is registered
+     */
+    fun getUser(id: Long): Boolean {
+        return context
+            .select(UserIslamicInfoSettings.USER_ISLAMIC_INFO_SETTINGS)
+            .from(UserIslamicInfoSettings.USER_ISLAMIC_INFO_SETTINGS)
+            .where(UserIslamicInfoSettings.USER_ISLAMIC_INFO_SETTINGS.USER_ID.eq(id))
+            .fetch()
+            .intoResultSet()
+            .use { rs -> rs.next() }
+    }
 
     fun checkIfUserExists(slashEvent: SlashCommandEvent): Boolean {
         val slash = slashEvent.slash
-        var regested: Boolean
+        val user = slashEvent.slash.user ?: return false
 
-        // context.select
-        context
-            .select(UserSettings.USER_SETTINGS)
-            .from(UserSettings.USER_SETTINGS)
-            .where(UserSettings.USER_SETTINGS.USER_ID.eq(slash.user?.idAsLong ?: 0))
-            .fetch()
-            .intoResultSet()
-            .use { rs -> regested = rs.next() }
-
-        return if (!regested) {
+        return if (!getUser(user.idAsLong)) {
             slash
-                .reply("Please register your information first, use /register")
+                .reply("Please register your information first by using /register, you only need to do this once.")
                 .setEphemeral(true)
                 .trigger()
             false
