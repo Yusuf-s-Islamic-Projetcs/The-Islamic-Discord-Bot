@@ -60,9 +60,9 @@ open class SlashHandler(private val ydwk: YDWK) : InteractionListeners {
     }
 
     override fun onSlashCommand(event: SlashCommandEvent) {
-        // check if the user has added required info
-        if (event.slash.name != "register" && event.slash.name != "help") {
+        if (event.slash.name != "register" ) {
             if (!checkIfUserExists(event)) {
+                event.slash.reply("Please register your information first by using /register, you only need to do this once.").setEphemeral(true).trigger()
                 return
             }
         }

@@ -29,20 +29,24 @@ import io.github.yip.bot.user.UserIslamicInfoDatabase
 
 class RegisterCommand : SlashCommandExtender {
     override fun onSlashCommand(event: SlashCommand) {
-        val user = event.user ?: throw IllegalArgumentException("User is required")
-        val quranReciter =
-            event.getOption("quran_reciter")?.asLong
-                ?: throw IllegalArgumentException("Quran reciter is required")
-        val islamicSchool =
-            event.getOption("islamic_school")?.asLong
-                ?: throw IllegalArgumentException("Islamic school is required")
+        val user = event.user ?: event.member?.user ?: throw IllegalStateException("Something is seriously wrong")
+
+        //TODO: Says o - fix on backend
+        println(event.options.size)
+
+        val quranReciterOption =
+            event.getOption("quran_reciter") ?: throw IllegalStateException("Quran reciter cannot be null")
+
+        val islamicSchoolOption =
+            event.getOption("islamic_school") ?: throw IllegalStateException("Islamic school cannot be null")
 
         if (!UserIslamicInfoDatabase.getUser(user.idAsLong)) {
             event.reply("You are already registered").setEphemeral(true).trigger()
             return
         } else {
             UserIslamicInfoDatabase.updateUserIslamicInfoDatabase(
-                user.idAsLong, quranReciter, islamicSchool.toString())
+                user.idAsLong, quranReciterOption.asDouble.toLong(), islamicSchoolOption.asDouble.toLong()
+            )
 
             event.reply("You have successfully registered").setEphemeral(true).trigger()
         }
@@ -62,10 +66,11 @@ class RegisterCommand : SlashCommandExtender {
 
     override fun options(): MutableList<SlashOption> {
         return mutableListOf(
-            SlashOption("quran_reciter", "Quran reciter", SlashOptionType.INTEGER, true)
+            SlashOption("quran_reciter", "Quran reciter", SlashOptionType.NUMBER, true)
                 .addChoices(recitersList),
-            SlashOption("islamic_school", "Islamic school", SlashOptionType.INTEGER, true)
+            SlashOption("islamic_school", "Islamic school", SlashOptionType.NUMBER, true)
                 .addChoices(
+                    //This has the islamic school id
                     SlashOptionChoice("Shafi", 1),
                     SlashOptionChoice("Hanafi", 2),
                     SlashOptionChoice("Maliki", 3),

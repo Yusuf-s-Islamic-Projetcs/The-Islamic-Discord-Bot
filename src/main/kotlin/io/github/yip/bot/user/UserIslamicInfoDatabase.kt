@@ -26,18 +26,18 @@ object UserIslamicInfoDatabase {
     private val context =
         database?.context ?: throw IllegalStateException("Database context is null")
 
-    fun updateUserIslamicInfoDatabase(userId: Long, quranReciterId: Long, islamicSchool: String) {
+    fun updateUserIslamicInfoDatabase(userId: Long, quranReciterId: Long, islamicSchool: Long) {
         context
             .insertInto(
                 UserIslamicInfoSettings.USER_ISLAMIC_INFO_SETTINGS,
                 UserIslamicInfoSettings.USER_ISLAMIC_INFO_SETTINGS.USER_ID,
                 UserIslamicInfoSettings.USER_ISLAMIC_INFO_SETTINGS.QURAN_RECITER_ID,
-                UserIslamicInfoSettings.USER_ISLAMIC_INFO_SETTINGS.ISLAMIC_SCHOOL)
+                UserIslamicInfoSettings.USER_ISLAMIC_INFO_SETTINGS.ISLAMIC_SCHOOL_ID)
             .values(userId, quranReciterId, islamicSchool)
             .onDuplicateKeyUpdate()
             .set(
                 UserIslamicInfoSettings.USER_ISLAMIC_INFO_SETTINGS.QURAN_RECITER_ID, quranReciterId)
-            .set(UserIslamicInfoSettings.USER_ISLAMIC_INFO_SETTINGS.ISLAMIC_SCHOOL, islamicSchool)
+            .set(UserIslamicInfoSettings.USER_ISLAMIC_INFO_SETTINGS.ISLAMIC_SCHOOL_ID, islamicSchool)
             .execute()
     }
 
@@ -53,18 +53,8 @@ object UserIslamicInfoDatabase {
     }
 
     fun checkIfUserExists(slashEvent: SlashCommandEvent): Boolean {
-        val slash = slashEvent.slash
+        slashEvent.slash
         val user = slashEvent.slash.user ?: return false
-
-        return if (!getUser(user.idAsLong)) {
-            slash
-                .reply(
-                    "Please register your information first by using /register, you only need to do this once.")
-                .setEphemeral(true)
-                .trigger()
-            false
-        } else {
-            true
-        }
+        return getUser(user.idAsLong)
     }
 }

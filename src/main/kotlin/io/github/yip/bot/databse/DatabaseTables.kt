@@ -29,7 +29,7 @@ class DatabaseTables(create: DSLContext) {
         val columns = mutableMapOf<String, DataType<*>>()
         columns["user_id"] = SQLDataType.BIGINT.nullable(false)
         columns["quran_reciter_id"] = SQLDataType.BIGINT.nullable(false)
-        columns["islamic_school"] = SQLDataType.VARCHAR(255).nullable(false)
+        columns["islamic_school_id"] = SQLDataType.BIGINT.nullable(false)
 
         val ut = create.createTableIfNotExists("user_islamic_info_settings")
         columns.forEach { (key, value) -> ut.column(key, value) }
