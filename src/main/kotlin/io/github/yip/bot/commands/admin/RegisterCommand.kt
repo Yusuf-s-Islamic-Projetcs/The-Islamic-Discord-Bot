@@ -29,21 +29,26 @@ import io.github.yip.bot.user.UserIslamicInfoDatabase
 
 class RegisterCommand : SlashCommandExtender {
     override fun onSlashCommand(event: SlashCommand) {
-        val user = event.user ?: event.member?.user ?: throw IllegalStateException("Something is seriously wrong")
+        val user =
+            event.user
+                ?: event.member?.user ?: throw IllegalStateException("Something is seriously wrong")
 
-            val quranReciterOption =
-            event.getOption("quran_reciter") ?: throw IllegalStateException("Quran reciter cannot be null")
+        val quranReciterOption =
+            event.getOption("quran_reciter")
+                ?: throw IllegalStateException("Quran reciter cannot be null")
 
         val islamicSchoolOption =
-            event.getOption("islamic_school") ?: throw IllegalStateException("Islamic school cannot be null")
+            event.getOption("islamic_school")
+                ?: throw IllegalStateException("Islamic school cannot be null")
 
         if (UserIslamicInfoDatabase.getUser(user.idAsLong)) {
             event.reply("You are already registered").setEphemeral(true).trigger()
             return
         } else {
             UserIslamicInfoDatabase.updateUserIslamicInfoDatabase(
-                user.idAsLong, quranReciterOption.asDouble.toLong(), islamicSchoolOption.asDouble.toLong()
-            )
+                user.idAsLong,
+                quranReciterOption.asDouble.toLong(),
+                islamicSchoolOption.asDouble.toLong())
 
             event.reply("You have successfully registered").setEphemeral(true).trigger()
         }
@@ -67,7 +72,7 @@ class RegisterCommand : SlashCommandExtender {
                 .addChoices(recitersList),
             SlashOption("islamic_school", "Islamic school", SlashOptionType.NUMBER, true)
                 .addChoices(
-                    //This has the islamic school id
+                    // This has the islamic school id
                     SlashOptionChoice("Shafi", 1),
                     SlashOptionChoice("Hanafi", 2),
                     SlashOptionChoice("Maliki", 3),
@@ -78,8 +83,7 @@ class RegisterCommand : SlashCommandExtender {
         get() {
             val reciters = mutableListOf<SlashOptionChoice>()
             ClassGraph().enableAllInfo().scan().use { scanResult ->
-                val reciterClasses =
-                    scanResult.getClassesImplementing(Reciter::class.java.name)
+                val reciterClasses = scanResult.getClassesImplementing(Reciter::class.java.name)
                 reciterClasses.forEach { reciterClass ->
                     val reciter = reciterClass.loadClass().getConstructor().newInstance() as Reciter
                     reciters.add(SlashOptionChoice(reciter.name, reciter.reciterId))

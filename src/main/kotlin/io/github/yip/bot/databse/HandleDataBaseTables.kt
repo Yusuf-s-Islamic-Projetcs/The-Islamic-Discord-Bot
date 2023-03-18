@@ -93,12 +93,8 @@ object HandleDataBaseTables {
                             if (!columns.containsKey(column)) {
                                 // drop the column
                                 mainLogger.info(
-                                    "Column $column is not in the list of columns, dropping it"
-                                )
-                                create
-                                    .alterTable(tableName)
-                                    .dropColumn(column)
-                                    .execute()
+                                    "Column $column is not in the list of columns, dropping it")
+                                create.alterTable(tableName).dropColumn(column).execute()
                             }
                         }
                     }

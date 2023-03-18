@@ -37,7 +37,8 @@ object UserIslamicInfoDatabase {
             .onDuplicateKeyUpdate()
             .set(
                 UserIslamicInfoSettings.USER_ISLAMIC_INFO_SETTINGS.QURAN_RECITER_ID, quranReciterId)
-            .set(UserIslamicInfoSettings.USER_ISLAMIC_INFO_SETTINGS.ISLAMIC_SCHOOL_ID, islamicSchool)
+            .set(
+                UserIslamicInfoSettings.USER_ISLAMIC_INFO_SETTINGS.ISLAMIC_SCHOOL_ID, islamicSchool)
             .execute()
     }
 

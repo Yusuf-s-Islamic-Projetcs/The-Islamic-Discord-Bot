@@ -21,8 +21,6 @@ package io.github.yip.bot
 import io.github.realyusufismail.jconfig.JConfig
 import io.github.ydwk.ydwk.BotBuilder.createDefaultBot
 import io.github.ydwk.ydwk.YDWK
-import io.github.ydwk.ydwk.evm.backend.event.on
-import io.github.ydwk.ydwk.evm.event.events.interaction.slash.SlashCommandEvent
 import io.github.yip.bot.databse.TheIslamicBotDatabase
 import io.github.yip.bot.listeners.CoreEventListener
 import io.github.yip.bot.listeners.handler.button.ButtonHandler

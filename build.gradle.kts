@@ -144,7 +144,7 @@ jooq {
                     }
                     target.apply {
                         packageName = "io.github.yip.db"
-                        directory = "build/generated-src/jooq/main" // default (can be omitted)
+                        directory = "src/main/java"
                     }
                     strategy.name = "org.jooq.codegen.DefaultGeneratorStrategy"
                 }
