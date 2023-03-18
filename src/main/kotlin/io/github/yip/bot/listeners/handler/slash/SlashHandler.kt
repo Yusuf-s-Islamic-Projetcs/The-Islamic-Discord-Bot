@@ -23,6 +23,7 @@ import io.github.ydwk.ydwk.YDWK
 import io.github.ydwk.ydwk.evm.event.events.interaction.slash.SlashCommandEvent
 import io.github.ydwk.ydwk.evm.listeners.InteractionListeners
 import io.github.yip.bot.mainLogger
+import io.github.yip.bot.user.UserIslamicInfoDatabase.checkIfUserExists
 
 open class SlashHandler(private val ydwk: YDWK) : InteractionListeners {
     private val slashCommand: MutableMap<String, SlashCommandExtender> = HashMap()
@@ -59,6 +60,17 @@ open class SlashHandler(private val ydwk: YDWK) : InteractionListeners {
     }
 
     override fun onSlashCommand(event: SlashCommandEvent) {
+        if (event.slash.name != "register") {
+            if (!checkIfUserExists(event)) {
+                event.slash
+                    .reply(
+                        "Please register your information first by using /register, you only need to do this once.")
+                    .setEphemeral(true)
+                    .trigger()
+                return
+            }
+        }
+
         slashCommand.forEach { (name, cmd) ->
             if (name == event.slash.name) {
                 cmd.onSlashCommand(event.slash)

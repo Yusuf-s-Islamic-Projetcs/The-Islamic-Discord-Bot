@@ -25,6 +25,8 @@ import io.github.yip.bot.databse.TheIslamicBotDatabase
 import io.github.yip.bot.listeners.CoreEventListener
 import io.github.yip.bot.listeners.handler.button.ButtonHandler
 import io.github.yip.bot.listeners.handler.slash.AutoSlashAdder
+import java.sql.SQLException
+import kotlin.system.exitProcess
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -43,4 +45,34 @@ suspend fun main() {
     ydwk.awaitReady().addEventListeners(CoreEventListener(), AutoSlashAdder(ydwk), ButtonHandler())
 
     database = TheIslamicBotDatabase()
+
+    Runtime.getRuntime()
+        .addShutdownHook(
+            Thread {
+                    mainLogger.info("Shutting down...")
+
+                    if (database != null && !database!!.dataSource.isClosed) {
+                        try {
+                            mainLogger.info("Closing database connection...")
+                            database!!.dataSource.connection.close()
+                        } catch (e: SQLException) {
+                            mainLogger.error("Error while closing database connection!")
+                            e.printStackTrace()
+                        }
+                    }
+
+                    try {
+                        mainLogger.info("Closing bot...")
+                        ydwk.shutdownAPI()
+                    } catch (e: Exception) {
+                        mainLogger.error("Error while closing bot!")
+                        e.printStackTrace()
+                    }
+
+                    mainLogger.info("Shutdown complete!")
+
+                    // stop the program
+                    exitProcess(0)
+                }
+                .apply { name = "ShutdownHook" })
 }

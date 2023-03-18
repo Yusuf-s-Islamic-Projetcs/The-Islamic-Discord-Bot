@@ -22,17 +22,18 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.github.yip.bot.databse.HandleDataBaseTables.addTablesToDatabase
 import io.github.yip.bot.jConfig
-import java.sql.Connection
 import java.sql.SQLException
 import java.util.*
 import kotlin.Exception
+import org.jooq.SQLDialect
+import org.jooq.impl.DSL
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 class TheIslamicBotDatabase {
     private val logger: Logger = LoggerFactory.getLogger(TheIslamicBotDatabase::class.java)
     private var config: HikariConfig = HikariConfig()
-    private var dataSource: HikariDataSource
+    var dataSource: HikariDataSource
 
     init {
         val props = Properties()
@@ -63,20 +64,24 @@ class TheIslamicBotDatabase {
             "Database connection established, will now attempt to create tables or update them")
 
         try {
-            addTablesToDatabase(getConnection())
+            addTablesToDatabase(connection)
         } catch (e: Exception) {
             logger.error("Error creating tables", e)
         }
     }
 
-    fun getConnection(): Connection? {
-        return try {
-            dataSource.connection
-        } catch (e: SQLException) {
-            logger.error("Error while getting connection", e)
-            null
-        }
-    }
+    /** The actual connection to the database */
+    private val connection
+        get() =
+            try {
+                dataSource.connection
+            } catch (e: SQLException) {
+                logger.error("Error getting connection", e)
+                null
+            }
+
+    /** Used to get tables from the database */
+    val context = connection?.let { DSL.using(it, SQLDialect.POSTGRES) }
 
     fun close() {
         dataSource.close()

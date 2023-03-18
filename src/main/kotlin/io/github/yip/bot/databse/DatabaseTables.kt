@@ -25,20 +25,18 @@ import org.jooq.impl.SQLDataType
 class DatabaseTables(create: DSLContext) {
 
     init {
-        // quran tables
+        // user settings table
         val columns = mutableMapOf<String, DataType<*>>()
         columns["user_id"] = SQLDataType.BIGINT.nullable(false)
         columns["quran_reciter_id"] = SQLDataType.BIGINT.nullable(false)
+        columns["islamic_school_id"] = SQLDataType.BIGINT.nullable(false)
 
-        val table = create.createTableIfNotExists("quran_reciter")
+        val ut = create.createTableIfNotExists("user_islamic_info_settings")
+        columns.forEach { (key, value) -> ut.column(key, value) }
+        ut.primaryKey("user_id")
+        ut.execute()
 
-        for (column in columns) {
-            table.column(column.key, column.value)
-        }
-
-        table.execute()
-
-        HandleDataBaseTables.tables.add("quran_reciter")
-        HandleDataBaseTables.tablesColumns["quran_reciter"] = columns
+        HandleDataBaseTables.tables.add("user_islamic_info_settings")
+        HandleDataBaseTables.tablesColumns["user_islamic_info_settings"] = columns
     }
 }

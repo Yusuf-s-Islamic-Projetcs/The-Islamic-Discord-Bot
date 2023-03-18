@@ -27,7 +27,7 @@ repositories { mavenCentral() }
 
 dependencies {
     // YDWK
-    implementation("io.github.realyusufismail:ydwk:1.4.5")
+    implementation("io.github.realyusufismail:ydwk:1.6.0")
     // JOOQ
     implementation("org.jooq:jooq:3.18.0")
     implementation("org.jooq:jooq-meta:3.18.0")
@@ -131,11 +131,6 @@ jooq {
                                     includeTypes = "JSONB?"
                                 },
                                 ForcedType().apply {
-                                    name = "varchar"
-                                    includeExpression = ".*"
-                                    includeTypes = "INET"
-                                },
-                                ForcedType().apply {
                                     name = "INSTANT"
                                     includeExpression = ".*"
                                     includeTypes = "TIMESTAMP"
@@ -149,7 +144,7 @@ jooq {
                     }
                     target.apply {
                         packageName = "io.github.yip.db"
-                        directory = "build/generated-src/jooq/main" // default (can be omitted)
+                        directory = "src/main/java"
                     }
                     strategy.name = "org.jooq.codegen.DefaultGeneratorStrategy"
                 }
