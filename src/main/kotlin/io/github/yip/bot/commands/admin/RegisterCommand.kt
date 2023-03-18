@@ -31,16 +31,13 @@ class RegisterCommand : SlashCommandExtender {
     override fun onSlashCommand(event: SlashCommand) {
         val user = event.user ?: event.member?.user ?: throw IllegalStateException("Something is seriously wrong")
 
-        //TODO: Says o - fix on backend
-        println(event.options.size)
-
-        val quranReciterOption =
+            val quranReciterOption =
             event.getOption("quran_reciter") ?: throw IllegalStateException("Quran reciter cannot be null")
 
         val islamicSchoolOption =
             event.getOption("islamic_school") ?: throw IllegalStateException("Islamic school cannot be null")
 
-        if (!UserIslamicInfoDatabase.getUser(user.idAsLong)) {
+        if (UserIslamicInfoDatabase.getUser(user.idAsLong)) {
             event.reply("You are already registered").setEphemeral(true).trigger()
             return
         } else {
