@@ -12,7 +12,7 @@ buildscript {
 }
 
 plugins {
-    kotlin("jvm") version "1.8.0"
+    kotlin("jvm") version "1.8.20"
     id("com.diffplug.spotless") version "6.16.0"
     id("nu.studer.jooq") version "8.1"
     application
