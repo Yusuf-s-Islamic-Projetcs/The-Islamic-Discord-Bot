@@ -41,7 +41,7 @@ dependencies {
     jooqGenerator("org.postgresql:postgresql:42.5.4")
     implementation("com.zaxxer:HikariCP:5.0.1")
     // classgraph
-    implementation("io.github.classgraph:classgraph:4.8.154")
+    implementation("io.github.classgraph:classgraph:4.8.158")
     // test
     testImplementation(kotlin("test"))
 }
