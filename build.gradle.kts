@@ -13,7 +13,7 @@ buildscript {
 
 plugins {
     kotlin("jvm") version "1.8.0"
-    id("com.diffplug.spotless") version "6.16.0"
+    id("com.diffplug.spotless") version "6.19.0"
     id("nu.studer.jooq") version "8.1"
     application
     jacoco // code coverage reports
